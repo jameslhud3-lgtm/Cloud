@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn Code - Baby Steps</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a2e;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 20px;
+      padding-bottom: 100px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      color: #00d474;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      color: #888;
+      font-size: 0.95rem;
+    }
+
+    .progress-bar {
+      background: #16213e;
+      border-radius: 20px;
+      height: 12px;
+      margin: 20px auto;
+      max-width: 400px;
+      overflow: hidden;
+      border: 1px solid #2a2a4a;
+    }
+
+    .progress-fill {
+      background: #00d474;
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: #888;
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+
+    .lesson {
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 15px auto;
+      max-width: 500px;
+      display: none;
+    }
+
+    .lesson.active {
+      display: block;
+    }
+
+    .lesson h2 {
+      color: #00d474;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .lesson p {
+      line-height: 1.7;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    .lesson .highlight {
+      color: #ff9f43;
+      font-weight: bold;
+    }
+
+    .lesson .keyword {
+      background: #0f3460;
+      color: #00d474;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .example-box {
+      background: #0f3460;
+      border-left: 3px solid #00d474;
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      margin: 15px 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .example-box .label {
+      color: #00d474;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .quiz-box {
+      background: #1a1a3e;
+      border: 2px solid #2a2a4a;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .quiz-box h3 {
+      color: #ff9f43;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .quiz-option {
+      display: block;
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      background: #16213e;
+      border: 2px solid #2a2a4a;
+      border-radius: 8px;
+      color: #ccc;
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:active {
+      transform: scale(0.98);
+    }
+
+    .quiz-option.correct {
+      border-color: #00d474;
+      background: rgba(0, 212, 116, 0.15);
+      color: #00d474;
+    }
+
+    .quiz-option.wrong {
+      border-color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.15);
+      color: #ff6b6b;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct-fb { background: rgba(0, 212, 116, 0.1); color: #00d474; }
+    .quiz-feedback.wrong-fb { background: rgba(255, 107, 107, 0.1); color: #ff6b6b; }
+
+    .nav-btn {
+      display: inline-block;
+      padding: 14px 30px;
+      background: #00d474;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 15px;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn:active {
+      transform: scale(0.96);
+    }
+
+    .nav-btn:disabled {
+      background: #2a2a4a;
+      color: #666;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .back-btn {
+      padding: 14px 20px;
+      background: transparent;
+      color: #888;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .step-count {
+      color: #888;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .analogy {
+      background: rgba(255, 159, 67, 0.1);
+      border: 1px solid rgba(255, 159, 67, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+
+    .analogy .label {
+      color: #ff9f43;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .trophy {
+      text-align: center;
+      font-size: 4rem;
+      margin: 20px 0;
+    }
+
+    .score-display {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #00d474;
+      margin: 10px 0;
+    }
+
+    .try-it-box {
+      background: rgba(0, 212, 116, 0.08);
+      border: 1px dashed #00d474;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+
+    .try-it-box .label {
+      color: #00d474;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Learn Code: Baby Steps</h1>
+    <p>No experience needed. We start from zero.</p>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-text" id="progressText">Lesson 0 of 8</div>
+
+  <!-- LESSON 0: Welcome -->
+  <div class="lesson active" id="lesson0">
+    <h2>Welcome!</h2>
+    <p>This tutorial is going to teach you the basics, <span class="highlight">one tiny step at a time</span>.</p>
+    <p>No rushing. No confusing words. If I use a new word, I'll explain it right away.</p>
+    <p>Here's what you'll learn:</p>
+    <div class="example-box">
+      <span class="label">Today's lessons</span>
+      1. What is code?<br>
+      2. What is a file?<br>
+      3. What is GitHub?<br>
+      4. What is Claude Code (this tool)?<br>
+      5. How they all work together<br>
+      6. How to ask me to build things for you<br>
+      7. How to see what you built (the preview link)
+    </div>
+    <p>Each lesson has a little quiz to make sure it clicked. No pressure -- you can retry as many times as you want.</p>
+    <div class="nav-row">
+      <div></div>
+      <button class="nav-btn" onclick="goTo(1)">Let's Start</button>
+    </div>
+  </div>
+
+  <!-- LESSON 1: What is Code? -->
+  <div class="lesson" id="lesson1">
+    <h2>Lesson 1: What is Code?</h2>
+    <p><span class="highlight">Code</span> is just instructions written for a computer. That's it.</p>
+    <p>You know how a recipe tells you step by step how to make a cake? Code is a recipe for a computer. It tells the computer what to do, step by step.</p>
+    <div class="analogy">
+      <span class="label">Think of it like this</span>
+      A recipe says: "Mix flour and eggs. Bake at 350 for 30 minutes."<br><br>
+      Code says: "Make the background blue. Put a button here. When someone taps it, do this."
+    </div>
+    <p>The snake game we made earlier? That was code telling the computer: "Draw a green square. Move it when someone taps an arrow. If it hits a wall, game over."</p>
+    <p>You don't need to write code yourself. <span class="highlight">You just tell me what you want, and I write the code for you.</span></p>
+
+    <div class="quiz-box" id="quiz1">
+      <h3>Quick Check</h3>
+      <p>What is code?</p>
+      <button class="quiz-option" onclick="checkAnswer(1, this, false)">A secret language only geniuses understand</button>
+      <button class="quiz-option" onclick="checkAnswer(1, this, true)">Instructions that tell a computer what to do</button>
+      <button class="quiz-option" onclick="checkAnswer(1, this, false)">A type of video game</button>
+      <div class="quiz-feedback" id="feedback1"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(0)">Back</button>
+      <button class="nav-btn" id="next1" disabled onclick="goTo(2)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 1 of 8</div>
+  </div>
+
+  <!-- LESSON 2: What is a File? -->
+  <div class="lesson" id="lesson2">
+    <h2>Lesson 2: What is a File?</h2>
+    <p>A <span class="highlight">file</span> is where code gets saved. Just like how you save a photo on your phone, code gets saved in a file.</p>
+    <p>The snake game? All of it lives inside one file called <span class="keyword">snake.html</span></p>
+    <div class="analogy">
+      <span class="label">Think of it like this</span>
+      Your phone has photo files (pictures), music files (songs), and video files (movies).<br><br>
+      Code files are the same idea -- they're just files that contain instructions instead of photos or music.
+    </div>
+    <p>The <span class="keyword">.html</span> part at the end tells the computer: "This file is a webpage. Open it in a web browser."</p>
+    <p>That's why you could tap that link earlier and see the game -- your phone's browser read the file and followed the instructions inside it.</p>
+
+    <div class="quiz-box" id="quiz2">
+      <h3>Quick Check</h3>
+      <p>What is <span class="keyword">snake.html</span>?</p>
+      <button class="quiz-option" onclick="checkAnswer(2, this, false)">An app you download from the App Store</button>
+      <button class="quiz-option" onclick="checkAnswer(2, this, false)">A photo of a snake</button>
+      <button class="quiz-option" onclick="checkAnswer(2, this, true)">A file that contains the code for the snake game</button>
+      <div class="quiz-feedback" id="feedback2"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(1)">Back</button>
+      <button class="nav-btn" id="next2" disabled onclick="goTo(3)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 2 of 8</div>
+  </div>
+
+  <!-- LESSON 3: What is GitHub? -->
+  <div class="lesson" id="lesson3">
+    <h2>Lesson 3: What is GitHub?</h2>
+    <p><span class="highlight">GitHub</span> is a website where people store their code files. Think of it like Google Drive or iCloud, but for code.</p>
+    <div class="analogy">
+      <span class="label">Think of it like this</span>
+      iCloud saves your photos online so you can see them from any device.<br><br>
+      GitHub saves your code online so anyone can see it from any device.
+    </div>
+    <p>When I save your snake game, it goes to GitHub. That's why you could tap that link and play it -- your phone grabbed the file from GitHub and showed it to you.</p>
+    <p>You have your own space on GitHub. It's like your own folder. The address is:</p>
+    <div class="example-box">
+      <span class="label">Your GitHub space</span>
+      github.com/jameslhud3-lgtm/Cloud
+    </div>
+    <p>Everything we build together gets saved there.</p>
+
+    <div class="quiz-box" id="quiz3">
+      <h3>Quick Check</h3>
+      <p>What is GitHub?</p>
+      <button class="quiz-option" onclick="checkAnswer(3, this, true)">A website that stores code files online</button>
+      <button class="quiz-option" onclick="checkAnswer(3, this, false)">A video game platform</button>
+      <button class="quiz-option" onclick="checkAnswer(3, this, false)">A text messaging app</button>
+      <div class="quiz-feedback" id="feedback3"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(2)">Back</button>
+      <button class="nav-btn" id="next3" disabled onclick="goTo(4)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 3 of 8</div>
+  </div>
+
+  <!-- LESSON 4: What is Claude Code? -->
+  <div class="lesson" id="lesson4">
+    <h2>Lesson 4: What is Claude Code?</h2>
+    <p><span class="highlight">Claude Code</span> is what you're using right now to talk to me. It's the tool where you type messages and I build things for you.</p>
+    <div class="analogy">
+      <span class="label">Think of it like this</span>
+      Imagine you hired a builder to make you a house. You don't need to know how to use a hammer. You just say "I want a blue house with 3 rooms" and the builder does it.<br><br>
+      Claude Code is like that. You tell me what you want. I write the code. I save it. I give you a link to see it.
+    </div>
+    <p>Here's what happens when you ask me to make something:</p>
+    <div class="example-box">
+      <span class="label">The steps</span>
+      1. You say what you want (example: "make me a snake game")<br>
+      2. I write the code and save it to a file<br>
+      3. I upload that file to GitHub<br>
+      4. I give you a link to tap and see it
+    </div>
+    <p><span class="highlight">You never need to touch the code.</span> Just tell me what you want in plain English.</p>
+
+    <div class="quiz-box" id="quiz4">
+      <h3>Quick Check</h3>
+      <p>What do YOU need to do to build something?</p>
+      <button class="quiz-option" onclick="checkAnswer(4, this, false)">Learn to write code first</button>
+      <button class="quiz-option" onclick="checkAnswer(4, this, true)">Just tell Claude what you want in normal words</button>
+      <button class="quiz-option" onclick="checkAnswer(4, this, false)">Download special software</button>
+      <div class="quiz-feedback" id="feedback4"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(3)">Back</button>
+      <button class="nav-btn" id="next4" disabled onclick="goTo(5)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 4 of 8</div>
+  </div>
+
+  <!-- LESSON 5: How it all connects -->
+  <div class="lesson" id="lesson5">
+    <h2>Lesson 5: How It All Connects</h2>
+    <p>Let's put it all together. Here's the full picture:</p>
+    <div class="example-box">
+      <span class="label">The full chain</span>
+      <strong>You</strong> type a message<br>
+      &darr;<br>
+      <strong>Claude Code</strong> (me) writes the code<br>
+      &darr;<br>
+      The code gets saved in a <strong>file</strong> (like snake.html)<br>
+      &darr;<br>
+      The file gets uploaded to <strong>GitHub</strong><br>
+      &darr;<br>
+      I give you a <strong>link</strong> to tap<br>
+      &darr;<br>
+      You tap the link and <strong>see your creation</strong> in your browser
+    </div>
+    <p>That's everything. That's the whole process. Every single time.</p>
+    <p>Want to change something? Just tell me. I update the code, upload it again, and the same link shows the new version.</p>
+
+    <div class="quiz-box" id="quiz5">
+      <h3>Quick Check</h3>
+      <p>Where does your file get stored so you can see it from your phone?</p>
+      <button class="quiz-option" onclick="checkAnswer(5, this, false)">Inside this chat</button>
+      <button class="quiz-option" onclick="checkAnswer(5, this, false)">On my phone's camera roll</button>
+      <button class="quiz-option" onclick="checkAnswer(5, this, true)">On GitHub (a website that stores code)</button>
+      <div class="quiz-feedback" id="feedback5"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(4)">Back</button>
+      <button class="nav-btn" id="next5" disabled onclick="goTo(6)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 5 of 8</div>
+  </div>
+
+  <!-- LESSON 6: How to ask me to build things -->
+  <div class="lesson" id="lesson6">
+    <h2>Lesson 6: How to Talk to Me</h2>
+    <p>You don't need special words. Just talk to me like a person. Here are some examples:</p>
+    <div class="example-box">
+      <span class="label">Good ways to ask</span>
+      "Make me a quiz about math"<br><br>
+      "Change the background to red"<br><br>
+      "Add a score counter"<br><br>
+      "Make the buttons bigger"<br><br>
+      "I don't like it, start over"<br><br>
+      "Show me the link so I can see it"
+    </div>
+    <p>And here are things you can always say if you're confused:</p>
+    <div class="example-box">
+      <span class="label">If you need help</span>
+      "I don't understand, explain it simpler"<br><br>
+      "What did you just do?"<br><br>
+      "Give me the link to see it"<br><br>
+      "That's not what I wanted, I meant..."
+    </div>
+    <p><span class="highlight">There are no wrong things to say.</span> If I don't understand, I'll ask you to explain more. No judgment.</p>
+
+    <div class="quiz-box" id="quiz6">
+      <h3>Quick Check</h3>
+      <p>Which is a good way to ask me to build something?</p>
+      <button class="quiz-option" onclick="checkAnswer(6, this, false)">Write me a function using React with state hooks</button>
+      <button class="quiz-option" onclick="checkAnswer(6, this, true)">Make me a quiz game about animals</button>
+      <button class="quiz-option" onclick="checkAnswer(6, this, false)">You can't ask -- you have to write code yourself</button>
+      <div class="quiz-feedback" id="feedback6"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(5)">Back</button>
+      <button class="nav-btn" id="next6" disabled onclick="goTo(7)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 6 of 8</div>
+  </div>
+
+  <!-- LESSON 7: The preview link -->
+  <div class="lesson" id="lesson7">
+    <h2>Lesson 7: The Preview Link</h2>
+    <p>Remember how you tapped a link to play the snake game? Let's understand how that works.</p>
+    <p>After I build something and upload it to GitHub, I'll always give you a <span class="highlight">tappable link</span> that looks like blue text you can tap.</p>
+    <div class="analogy">
+      <span class="label">Think of it like this</span>
+      When someone texts you a YouTube link and you tap it, a video opens.<br><br>
+      Same thing here. I give you a link, you tap it, and your creation opens in your browser.
+    </div>
+    <p><strong>How to save it:</strong></p>
+    <div class="example-box">
+      <span class="label">Save it to your home screen</span>
+      1. Tap the link I give you<br>
+      2. It opens in your browser<br>
+      3. Tap the Share button (square with arrow on iPhone, three dots on Android)<br>
+      4. Tap "Add to Home Screen"<br>
+      5. Now it's on your phone like an app!
+    </div>
+    <p>If you ever lose the link, just come back here and ask me: <span class="highlight">"Give me the link"</span> and I'll give it to you again.</p>
+
+    <div class="quiz-box" id="quiz7">
+      <h3>Quick Check</h3>
+      <p>If you lose the link to your game, what do you do?</p>
+      <button class="quiz-option" onclick="checkAnswer(7, this, false)">Give up, it's gone forever</button>
+      <button class="quiz-option" onclick="checkAnswer(7, this, false)">Learn to code so you can find it yourself</button>
+      <button class="quiz-option" onclick="checkAnswer(7, this, true)">Just ask Claude: "Give me the link"</button>
+      <div class="quiz-feedback" id="feedback7"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(6)">Back</button>
+      <button class="nav-btn" id="next7" disabled onclick="goTo(8)">Next Lesson</button>
+    </div>
+    <div class="step-count">Lesson 7 of 8</div>
+  </div>
+
+  <!-- LESSON 8: Graduation -->
+  <div class="lesson" id="lesson8">
+    <h2>You Did It!</h2>
+    <div class="trophy">&#127942;</div>
+    <div class="score-display" id="finalScore"></div>
+    <p>You now know:</p>
+    <div class="example-box">
+      <span class="label">What you learned</span>
+      &#10003; <strong>Code</strong> = instructions for a computer<br><br>
+      &#10003; <strong>File</strong> = where code is saved<br><br>
+      &#10003; <strong>GitHub</strong> = a website that stores your files online<br><br>
+      &#10003; <strong>Claude Code</strong> = you talk, I build<br><br>
+      &#10003; <strong>Preview link</strong> = tap it to see what we made<br><br>
+      &#10003; <strong>You don't need to know code</strong> = just tell me what you want
+    </div>
+    <p style="text-align:center; margin-top: 20px;">Now go back to the chat and tell me what you want to build next!</p>
+    <div class="try-it-box">
+      <span class="label">Ideas to try</span>
+      "Make me a quiz game about [any topic]"<br><br>
+      "Make me a to-do list app"<br><br>
+      "Make me a calculator"<br><br>
+      "Make me a flashcard app for studying"<br><br>
+      Or anything else you can think of!
+    </div>
+
+    <div class="nav-row">
+      <button class="back-btn" onclick="goTo(7)">Back</button>
+      <button class="nav-btn" onclick="goTo(0)">Start Over</button>
+    </div>
+  </div>
+
+  <script>
+    const totalLessons = 8;
+    let score = 0;
+    let answered = {};
+
+    function goTo(n) {
+      document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+      document.getElementById('lesson' + n).classList.add('active');
+
+      const pct = Math.round((n / totalLessons) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent =
+        n === 0 ? 'Ready to start!' :
+        n === totalLessons ? 'Complete!' :
+        'Lesson ' + n + ' of ' + (totalLessons - 1);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (n === totalLessons) {
+        document.getElementById('finalScore').textContent =
+          score + ' out of 7 correct!';
+      }
+    }
+
+    function checkAnswer(lessonNum, btn, isCorrect) {
+      if (answered[lessonNum]) return;
+
+      const feedback = document.getElementById('feedback' + lessonNum);
+      const nextBtn = document.getElementById('next' + lessonNum);
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.textContent = 'That\'s right! You got it.';
+        feedback.className = 'quiz-feedback show correct-fb';
+        if (!answered[lessonNum]) score++;
+      } else {
+        btn.classList.add('wrong');
+        feedback.textContent = 'Not quite -- try tapping a different answer!';
+        feedback.className = 'quiz-feedback show wrong-fb';
+        return;
+      }
+
+      answered[lessonNum] = true;
+      nextBtn.disabled = false;
+
+      document.querySelectorAll('#quiz' + lessonNum + ' .quiz-option').forEach(o => {
+        o.style.pointerEvents = 'none';
+      });
+    }
+  </script>
+</body>
+</html>
