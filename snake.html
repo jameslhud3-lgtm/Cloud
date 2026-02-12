@@ -186,6 +186,83 @@
       height: 60px;
     }
 
+    .voice-section {
+      margin-top: 14px;
+      border-top: 1px solid #2a2a4a;
+      padding-top: 14px;
+    }
+
+    .voice-toggle {
+      width: 100%;
+      padding: 8px;
+      background: #0f3460;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .voice-toggle:hover {
+      border-color: #00d474;
+      color: #e0e0e0;
+    }
+
+    .voice-toggle.active {
+      background: #00d474;
+      color: #1a1a2e;
+      border-color: #00d474;
+      font-weight: bold;
+    }
+
+    .voice-toggle.active .mic-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #ff6b6b;
+      border-radius: 50%;
+      animation: pulse-dot 1s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .voice-heard {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: #888;
+      text-align: center;
+      min-height: 1.2em;
+    }
+
+    .voice-heard .heard-word {
+      color: #00d474;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .voice-commands {
+      margin-top: 10px;
+    }
+
+    .voice-commands .control-row {
+      margin-bottom: 6px;
+    }
+
+    .voice-commands .key {
+      background: #1a1a2e;
+      color: #ff9f43;
+      border-color: #3a2a1a;
+    }
+
     @media (pointer: coarse) {
       .touch-controls { display: block; }
       .controls { display: none; }
@@ -228,6 +305,31 @@
         <div class="control-row">
           <span class="label">Restart</span>
           <span class="key">Enter</span>
+        </div>
+        <div class="voice-section">
+          <button class="voice-toggle" id="voiceToggle">
+            <span class="mic-dot"></span>
+            <span id="voiceBtnText">Enable Mic</span>
+          </button>
+          <div class="voice-heard" id="voiceHeard"></div>
+          <div class="voice-commands" id="voiceCommands" style="display:none;">
+            <div class="control-row">
+              <span class="label">Move</span>
+              <span class="key">up / down / left / right</span>
+            </div>
+            <div class="control-row">
+              <span class="label">Pause</span>
+              <span class="key">pause / stop</span>
+            </div>
+            <div class="control-row">
+              <span class="label">Resume</span>
+              <span class="key">go / start</span>
+            </div>
+            <div class="control-row">
+              <span class="label">Restart</span>
+              <span class="key">restart / reset</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -493,6 +595,106 @@
       }
       draw();
       requestAnimationFrame(gameLoop);
+    }
+
+    // Voice controls
+    const voiceToggle = document.getElementById('voiceToggle');
+    const voiceBtnText = document.getElementById('voiceBtnText');
+    const voiceHeard = document.getElementById('voiceHeard');
+    const voiceCommands = document.getElementById('voiceCommands');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let voiceActive = false;
+
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      const voiceMap = {
+        'up':      () => setDirection(0, -1),
+        'north':   () => setDirection(0, -1),
+        'down':    () => setDirection(0, 1),
+        'south':   () => setDirection(0, 1),
+        'left':    () => setDirection(-1, 0),
+        'west':    () => setDirection(-1, 0),
+        'right':   () => setDirection(1, 0),
+        'east':    () => setDirection(1, 0),
+        'pause':   () => { if (gameState === 'playing') gameState = 'paused'; },
+        'stop':    () => { if (gameState === 'playing') gameState = 'paused'; },
+        'go':      () => { if (gameState === 'paused') gameState = 'playing'; },
+        'start':   () => { if (gameState === 'paused') gameState = 'playing'; },
+        'restart': () => { if (gameState === 'over') init(); },
+        'reset':   () => { if (gameState === 'over') init(); },
+      };
+
+      let lastProcessed = '';
+
+      recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript.trim().toLowerCase();
+          const words = transcript.split(/\s+/);
+          const lastWord = words[words.length - 1];
+
+          if (lastWord !== lastProcessed && voiceMap[lastWord]) {
+            lastProcessed = lastWord;
+            voiceMap[lastWord]();
+            voiceHeard.innerHTML = 'Heard: <span class="heard-word">' +
+              lastWord.replace(/[<>&"]/g, '') + '</span>';
+          }
+
+          if (event.results[i].isFinal) {
+            lastProcessed = '';
+          }
+        }
+      };
+
+      recognition.onerror = (event) => {
+        if (event.error === 'not-allowed') {
+          voiceHeard.textContent = 'Mic access denied';
+          stopVoice();
+        } else if (event.error !== 'no-speech') {
+          voiceHeard.textContent = 'Error: ' + event.error;
+        }
+      };
+
+      recognition.onend = () => {
+        if (voiceActive) {
+          recognition.start();
+        }
+      };
+
+      voiceToggle.addEventListener('click', () => {
+        if (voiceActive) {
+          stopVoice();
+        } else {
+          startVoice();
+        }
+      });
+    } else {
+      voiceToggle.textContent = 'Voice N/A';
+      voiceToggle.disabled = true;
+      voiceToggle.style.opacity = '0.4';
+    }
+
+    function startVoice() {
+      voiceActive = true;
+      recognition.start();
+      voiceToggle.classList.add('active');
+      voiceBtnText.textContent = 'Mic On';
+      voiceCommands.style.display = 'block';
+      voiceHeard.textContent = 'Listening...';
+    }
+
+    function stopVoice() {
+      voiceActive = false;
+      recognition.stop();
+      voiceToggle.classList.remove('active');
+      voiceBtnText.textContent = 'Enable Mic';
+      voiceCommands.style.display = 'none';
+      voiceHeard.textContent = '';
     }
 
     init();
