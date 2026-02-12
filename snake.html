@@ -186,6 +186,30 @@
       height: 60px;
     }
 
+    .touch-action-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .touch-action-btn {
+      padding: 10px 20px;
+      background: #16213e;
+      border: 2px solid #00d474;
+      border-radius: 8px;
+      color: #00d474;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .touch-action-btn:active {
+      background: #00d474;
+      color: #16213e;
+    }
+
     .voice-section {
       margin-top: 14px;
       border-top: 1px solid #2a2a4a;
@@ -343,6 +367,10 @@
         <button class="touch-btn" data-dir="left">&#9664;</button>
         <button class="touch-btn" data-dir="down">&#9660;</button>
         <button class="touch-btn" data-dir="right">&#9654;</button>
+      </div>
+      <div class="touch-action-row">
+        <button class="touch-action-btn" id="touchPause">Pause</button>
+        <button class="touch-action-btn" id="touchRestart">Restart</button>
       </div>
     </div>
     <div class="controls">
@@ -584,6 +612,17 @@
         else if (dir === 'left') setDirection(-1, 0);
         else if (dir === 'right') setDirection(1, 0);
       });
+    });
+
+    // Touch pause & restart buttons
+    document.getElementById('touchPause').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (gameState === 'playing') gameState = 'paused';
+      else if (gameState === 'paused') gameState = 'playing';
+    });
+    document.getElementById('touchRestart').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (gameState === 'over') init();
     });
 
     // Game loop
