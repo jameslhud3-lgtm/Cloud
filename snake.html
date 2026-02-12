@@ -19,6 +19,58 @@
 
     .game-container {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .main-layout {
+      display: flex;
+      gap: 25px;
+      align-items: flex-start;
+    }
+
+    .controls-panel {
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: left;
+      width: 180px;
+      flex-shrink: 0;
+    }
+
+    .controls-panel h3 {
+      color: #00d474;
+      font-size: 1rem;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid #2a2a4a;
+      padding-bottom: 8px;
+    }
+
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .control-row .label {
+      color: #aaa;
+      font-size: 0.85rem;
+    }
+
+    .key {
+      background: #0f3460;
+      color: #00d474;
+      border: 1px solid #2a2a4a;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      white-space: nowrap;
     }
 
     h1 {
@@ -58,6 +110,18 @@
       margin-top: 15px;
       color: #888;
       font-size: 0.9rem;
+    }
+
+    @media (max-width: 700px) {
+      .main-layout {
+        flex-direction: column;
+        align-items: center;
+      }
+      .controls-panel {
+        width: 100%;
+        max-width: 400px;
+        order: 1;
+      }
     }
 
     .overlay {
@@ -135,8 +199,37 @@
       <div><span>Score: </span><span class="value" id="score">0</span></div>
       <div><span>Best: </span><span class="value" id="best">0</span></div>
     </div>
-    <div class="game-wrapper">
-      <canvas id="game" width="400" height="400"></canvas>
+    <div class="main-layout">
+      <div class="game-wrapper">
+        <canvas id="game" width="400" height="400"></canvas>
+      </div>
+      <div class="controls-panel">
+        <h3>Controls</h3>
+        <div class="control-row">
+          <span class="label">Move up</span>
+          <span><span class="key">W</span> <span class="key">&uarr;</span></span>
+        </div>
+        <div class="control-row">
+          <span class="label">Move down</span>
+          <span><span class="key">S</span> <span class="key">&darr;</span></span>
+        </div>
+        <div class="control-row">
+          <span class="label">Move left</span>
+          <span><span class="key">A</span> <span class="key">&larr;</span></span>
+        </div>
+        <div class="control-row">
+          <span class="label">Move right</span>
+          <span><span class="key">D</span> <span class="key">&rarr;</span></span>
+        </div>
+        <div class="control-row">
+          <span class="label">Pause</span>
+          <span class="key">Space</span>
+        </div>
+        <div class="control-row">
+          <span class="label">Restart</span>
+          <span class="key">Enter</span>
+        </div>
+      </div>
     </div>
     <div class="touch-controls">
       <div class="touch-row">
